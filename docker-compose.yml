@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  rtp-database:
+    image: mongo
+    container_name: rtp-database
+    ports:
+      - 27017:27017
+
+  rtp-broker:
+    container_name: rtp-broker
+    build:
+      context: broker
+    ports:
+      - 4040:4040
+
+  rtp-client:
+    container_name: rtp-client
+    build:
+      context: client
+    depends_on:
+      - rtp-broker
+      - rtp-database
+
+  rtp-server:
+    container_name: rtp-server
+    build:
+      context: server
+    depends_on:
+      - rtp-api
+      - rtp-broker
+
+  rtp-api:
+    image: alexburlacu/rtp-server:faf18x
+    container_name: rtp-api
+    ports:
+      - 4000:4000
