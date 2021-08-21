@@ -23,24 +23,18 @@ defmodule Sentiments.Analyzer do
   def get_words(tweet) do
     symbols = [",", ".", ":", "?", "!"]
 
-    tweet["message"]["tweet"]["text"]
+    tweet["text"]
     |> String.replace(symbols, "")
     |> String.split(" ", trim: true)
   end
 
   defp compute_score(tweet) do
-    if tweet == "{\"message\": panic}" do
-      IO.inspect(tweet)
-    else
-      {:ok, tweet} = Poison.decode(tweet)
+    score =
+      tweet
+      |> get_words()
+      |> get_score()
 
-      score =
-        tweet
-        |> get_words()
-        |> get_score()
-
-      IO.puts("Tweet score: " <> Float.to_string(score))
-    end
+    IO.puts("Tweet score: " <> Float.to_string(score))
   end
 
   @impl true
